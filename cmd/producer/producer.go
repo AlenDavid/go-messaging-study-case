@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -35,16 +36,31 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	body := "Hello World!"
-	err = ch.PublishWithContext(ctx,
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s\n", body)
+	var end chan struct{} = make(chan struct{})
+
+	go func() {
+		for {
+			body := fmt.Sprintf("Hello World! at %s", time.Now())
+
+			err = ch.PublishWithContext(ctx,
+				"",     // exchange
+				q.Name, // routing key
+				false,  // mandatory
+				false,  // immediate
+				amqp.Publishing{
+					Body: []byte(body),
+				})
+
+			if err != nil {
+				log.Println("Failed to publish a message")
+				end <- struct{}{}
+			} else {
+				log.Printf(" [x] Sent %s\n", body)
+			}
+
+			time.Sleep(5 * time.Second)
+		}
+	}()
+
+	<-end
 }
