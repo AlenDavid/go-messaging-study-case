@@ -1,5 +1,5 @@
-module github.com/alendavid/rabbit-mq
+module github.com/alendavid/go-messaging-study-case
 
 go 1.19
 
-require github.com/rabbitmq/amqp091-go v1.5.0 // indirect
+require github.com/rabbitmq/amqp091-go v1.5.0
