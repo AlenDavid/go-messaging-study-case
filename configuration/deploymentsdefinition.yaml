@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-consumer
+spec:
+  selector:
+    matchLabels:
+      app: hello-consumer
+  template:
+    metadata:
+      labels:
+        app: hello-consumer
+    spec:
+      containers:
+      - name: hello-consumer
+        image: alen/hello-consumer
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-producer
+spec:
+  selector:
+    matchLabels:
+      app: hello-producer
+  template:
+    metadata:
+      labels:
+        app: hello-producer
+    spec:
+      containers:
+      - name: hello-producer
+        image: alen/hello-producer
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

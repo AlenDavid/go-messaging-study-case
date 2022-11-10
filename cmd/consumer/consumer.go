@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -13,7 +14,10 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	amqpUrl := flag.String("AMQP_URL", "amqp://guest:guest@my-stateful-broker-0.broker.default.svc.cluster.local:5672/", "The RabbitMQ url connection.")
+	flag.Parse()
+
+	conn, err := amqp.Dial(*amqpUrl)
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
